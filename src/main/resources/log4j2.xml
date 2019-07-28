@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN"  debug="OFF">
+    <Properties>
+        <Property name="LOG_PATTERN">[${project.artifactId}] %d{yyyy-MM-dd HH:mm:ss} %p [%t] %C.%M(%L) | %m%n</Property>
+    </Properties>
+    <Appenders>
+        <!-- 控制台日志输出 -->
+        <Console name="console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Filters>
+                <!--在控制台只输出警告和错误日志信息-->
+                <ThresholdFilter level="${logger.console.level.min}"/>
+                <!--<ThresholdFilter level="ERROR" onMatch="DENY" onMismatch="NEUTRAL"/>-->
+            </Filters>
+        </Console>
+
+        <!-- 调试日志记录，每个文件最大4M，最多纪录10个文件 -->
+        <RollingFile name="debugLogs" fileName="${logger.dir}/logs/probackend/debugs.log"
+                     filePattern="${logger.dir}/logs/probackend/debugs.%d{yyyy-MM-dd}.log.zip">
+            <PatternLayout>
+                <Pattern>[${project.artifactId}] %d{yyyy-MM-dd HH:mm:ss} %p [%t] %C.%M(%L) | %m%n</Pattern>
+            </PatternLayout>
+            <Filters>
+                <!--<ThresholdFilter level="DEBUG"/>-->
+                <ThresholdFilter level="INFO" onMatch="DENY" onMismatch="NEUTRAL"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+        <!-- 错误日志记录，每个文件最大4M，最多纪录10个文件 -->
+        <RollingFile name="errorLogs" fileName="${logger.dir}/logs/probackend/errors.log"
+                     filePattern="${logger.dir}/logs/probackend/errors.%d{yyyy-MM-dd}.log.zip">
+            <PatternLayout>
+                <Pattern>[${project.artifactId}] %d{yyyy-MM-dd HH:mm:ss} %p [%t] %C.%M(%L) | %m%n</Pattern>
+            </PatternLayout>
+            <Filters>
+                <ThresholdFilter level="WARN"/>
+            </Filters>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+        <!-- 所有日志记录，每日一个文件 -->
+        <RollingFile name="allLogs" fileName="${logger.dir}/logs/probackend/api.log"
+                     filePattern="${logger.dir}/logs/probackend/api.%d{yyyy-MM-dd}.log.zip">
+            <PatternLayout>
+                <Pattern>[${project.artifactId}] %d{yyyy-MM-dd HH:mm:ss} %p [%t] %C.%M(%L) | %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+
+    </Appenders>
+    <Loggers>
+
+        <Root level="${logger.level}">
+            <AppenderRef ref="console"/>
+            <AppenderRef ref="debugLogs"/>
+            <AppenderRef ref="errorLogs"/>
+            <AppenderRef ref="allLogs"/>
+        </Root>
+
+        <logger name="druid.sql.Statement" level="debug"/>
+
+        <logger name="RocketmqClient"  level="error"/>
+        <logger name="RocketmqRemoting"  level="error"/>
+        <logger name="RocketmqCommon"  level="error"/>
+
+        <logger name="com.alibaba.dubbo" level="warn" />
+        <logger name="com.alibaba.druid" level="debug"  />
+
+        <logger name="org.springframework" level="warn" />
+
+        <logger name="org.apache.commons.beanutils" level="error" />
+        <logger name="org.hibernate"  level="error"/>
+        <logger name="org.apache.zookeeper" level="warn" />
+        <logger name="org.hibernate" level="warn" />
+        <logger name="org.apache.cxf" level="warn" />
+
+    </Loggers>
+</Configuration>
